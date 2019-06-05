@@ -1,0 +1,8 @@
+{
+    "ErrorCode": 0,
+    "isFile": false,
+    "hasDirs": true,
+    "dirs": [
+        "CMakeFiles"
+    ]
+}

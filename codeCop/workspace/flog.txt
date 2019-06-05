@@ -1,0 +1,97 @@
+2019-05-29 14:26:20.350743  /Users/hongjeongmin/Documents/coding/codeCop/workspace/exproj/prac5.c
+2019-05-29 14:26:20.351885  /Users/hongjeongmin/Documents/coding/codeCop/workspace/exproj/prac1.c
+2019-05-29 14:26:20.352667  /Users/hongjeongmin/Documents/coding/codeCop/workspace/exproj/prac12.c
+2019-05-29 14:26:20.353500  /Users/hongjeongmin/Documents/coding/codeCop/workspace/exproj/prac3c.c
+2019-05-29 14:26:20.354257  /Users/hongjeongmin/Documents/coding/codeCop/workspace/exproj/prac4_1.c
+2019-05-29 14:26:20.354887  /Users/hongjeongmin/Documents/coding/codeCop/workspace/exproj/prac2.c
+2019-05-29 14:26:20.355637  /Users/hongjeongmin/Documents/coding/codeCop/workspace/exproj/prac3.c
+2019-05-29 14:26:20.356267  /Users/hongjeongmin/Documents/coding/codeCop/workspace/exproj/prac4.c
+2019-05-29 14:26:20.357076  /Users/hongjeongmin/Documents/coding/codeCop/workspace/clioncprac/treeprac.c
+2019-05-29 14:26:20.359069  /Users/hongjeongmin/Documents/coding/codeCop/workspace/clioncprac/prachan.c
+2019-05-29 14:26:20.359827  /Users/hongjeongmin/Documents/coding/codeCop/workspace/clioncprac/algoprac.c
+2019-05-29 14:26:20.360701  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1402manybook.c
+2019-05-29 14:26:20.361444  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC
+2019-05-29 14:26:20.361695  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC
+2019-05-29 14:26:20.362402  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1215where.c
+2019-05-29 14:26:20.363112  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1202forc99.c
+2019-05-29 14:26:20.363837  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1407funds3.c
+2019-05-29 14:26:20.364446  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1205parta.c
+2019-05-29 14:26:20.365022  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1408names1.c
+2019-05-29 14:26:20.365696  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1409names2.c
+2019-05-29 14:26:20.366336  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1118str_cat.c
+2019-05-29 14:26:20.366973  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1213manydice.c
+2019-05-29 14:26:20.367600  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1103addresses.c
+2019-05-29 14:26:20.368205  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1201hiding.c
+2019-05-29 14:26:20.368801  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1204global.c
+2019-05-29 14:26:20.369452  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1203loc_stat.c
+2019-05-29 14:26:20.370229  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1115put_put.c
+2019-05-29 14:26:20.371082  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1208r_drive0.c
+2019-05-29 14:26:20.372029  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1108fgets2.c
+2019-05-29 14:26:20.372876  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1107fgets1.c
+2019-05-29 14:26:20.373997  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1109fgets3.c
+2019-05-29 14:26:20.374652  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1404friends.c
+2019-05-29 14:26:20.375256  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1212diceroll.c
+2019-05-29 14:26:20.375839  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1410names3.c
+2019-05-29 14:26:20.376794  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/main.c
+2019-05-29 14:26:20.378768  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1105p_and_s.c
+2019-05-29 14:26:20.379835  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1214dyn_arr.c
+2019-05-29 14:26:20.380525  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1207rand0.c
+2019-05-29 14:26:20.381384  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1209s_and_r.c
+2019-05-29 14:26:20.382159  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1117test_fit.c
+2019-05-29 14:26:20.382897  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1104arrchar.c
+2019-05-29 14:26:20.383659  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1403friend.c
+2019-05-29 14:26:20.385595  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1413funds4.c
+2019-05-29 14:26:20.386424  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1401book.c
+2019-05-29 14:26:20.387019  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1112put_out.c
+2019-05-29 14:26:20.387540  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1405funds1.c
+2019-05-29 14:26:20.388150  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1206partb.c
+2019-05-29 14:26:20.388860  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1110s_gets.c
+2019-05-29 14:26:20.389497  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1101strings1.c
+2019-05-29 14:26:20.390389  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1416func_ptr.c
+2019-05-29 14:26:20.391195  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1406funds2.c
+2019-05-29 14:26:20.391943  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1210r_drive1.c
+2019-05-29 14:26:20.392717  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1111scan_str.c
+2019-05-29 14:26:20.393887  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/diceroll.h
+2019-05-29 14:26:20.394427  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1102strptr.c
+2019-05-29 14:26:20.394940  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1106getsputs.c
+2019-05-29 14:26:20.395524  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1113nono.c
+2019-05-29 14:26:20.396286  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/1114put1.c
+2019-05-29 14:26:20.397124  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/cmake-build-debug
+2019-05-29 14:26:20.397457  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/cmake-build-debug
+2019-05-29 14:26:20.398201  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/cmake-build-debug/CMakeFiles
+2019-05-29 14:26:20.399043  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/cmake-build-debug/CMakeFiles
+2019-05-29 14:26:20.399457  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/cmake-build-debug/CMakeFiles/feature_tests.c
+2019-05-29 14:26:20.400772  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/cmake-build-debug/CMakeFiles/3.11.1
+2019-05-29 14:26:20.401872  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/cmake-build-debug/CMakeFiles/3.11.1
+2019-05-29 14:26:20.403278  /Users/hongjeongmin/Documents/coding/codeCop/workspace/lastC/cmake-build-debug/CMakeFiles/3.11.1/CompilerIdC/CMakeCCompilerId.c
+2019-05-29 14:26:20.405104  /Users/hongjeongmin/Documents/coding/codeCop/workspace/DSinC/list.c
+2019-05-29 14:26:20.406393  /Users/hongjeongmin/Documents/coding/codeCop/workspace/DSinC/binarysearchtree.c
+2019-05-29 14:26:20.407743  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC
+2019-05-29 14:26:20.408236  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC
+2019-05-29 14:26:20.408537  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/FindBestStudent.c
+2019-05-29 14:26:20.409646  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/library.h
+2019-05-29 14:26:20.411138  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/SortStudent.c
+2019-05-29 14:26:20.411999  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/ShowStudent.c
+2019-05-29 14:26:20.412760  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/Student.c
+2019-05-29 14:26:20.413411  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/EnterStudent.c
+2019-05-29 14:26:20.413947  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/library.c
+2019-05-29 14:26:20.414743  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/student.h
+2019-05-29 14:26:20.416236  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/cmake-build-debug
+2019-05-29 14:26:20.416664  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/cmake-build-debug
+2019-05-29 14:26:20.417270  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/cmake-build-debug/CMakeFiles
+2019-05-29 14:26:20.417847  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/cmake-build-debug/CMakeFiles
+2019-05-29 14:26:20.420305  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/cmake-build-debug/CMakeFiles/feature_tests.c
+2019-05-29 14:26:20.422299  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/cmake-build-debug/CMakeFiles/3.11.1
+2019-05-29 14:26:20.423047  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/cmake-build-debug/CMakeFiles/3.11.1
+2019-05-29 14:26:20.424518  /Users/hongjeongmin/Documents/coding/codeCop/workspace/finalC/cmake-build-debug/CMakeFiles/3.11.1/CompilerIdC/CMakeCCompilerId.c
+2019-05-29 14:26:20.426554  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/MLinC
+2019-05-29 14:26:20.427119  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/MLinC
+2019-05-29 14:26:20.427949  /Users/hongjeongmin/Documents/coding/codeCop/workspace/MLinC/hello_tf.c
+2019-05-29 14:26:20.429064  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/MLinC/cmake-build-debug
+2019-05-29 14:26:20.429464  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/MLinC/cmake-build-debug
+2019-05-29 14:26:20.429984  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/MLinC/cmake-build-debug/CMakeFiles
+2019-05-29 14:26:20.431240  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/MLinC/cmake-build-debug/CMakeFiles
+2019-05-29 14:26:20.431632  /Users/hongjeongmin/Documents/coding/codeCop/workspace/MLinC/cmake-build-debug/CMakeFiles/feature_tests.c
+2019-05-29 14:26:20.432840  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/MLinC/cmake-build-debug/CMakeFiles/3.11.1
+2019-05-29 14:26:20.433525  !!  /Users/hongjeongmin/Documents/coding/codeCop/workspace/MLinC/cmake-build-debug/CMakeFiles/3.11.1
+2019-05-29 14:26:20.434611  /Users/hongjeongmin/Documents/coding/codeCop/workspace/MLinC/cmake-build-debug/CMakeFiles/3.11.1/CompilerIdC/CMakeCCompilerId.c

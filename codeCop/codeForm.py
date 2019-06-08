@@ -25,22 +25,25 @@ class ecode:
         self.fname = fname
         self.t = thres
 
-    def _overMaxflen(self, fpath, fname):
-        if sys.platform.startswith('windows') and len(fpath) > 260 :
+    def _overMaxflen(self):
+        if sys.platform.startswith('windows') and len(self.fpath) > 260 :
             return True
-        elif (sys.platform.startswith('linux') or sys.platform.startswith('darwin')) and len(fname) > 255:
+        elif (sys.platform.startswith('linux') or sys.platform.startswith('darwin')) and len(self.fname) > 255:
             return True
         else:
             return False
 
-    def decerr(self):
-        if self._overMaxflen(self.fpath, self.fname):
+    def ferr(self):
+        if self._overMaxflen():
             return ('e1', "Too Long Name")
         elif getsize(self.fpath) > self.t:
             return ('e3', "Too Big File")
         elif getsize(self.fpath) == 0:
             return ('e4', "Empty Source File")
         return False
+
+    def derr(self):
+
 '''
     def decErr(e, fname, fpath, t):
         if overMaxflen(fpath, fname):
@@ -146,7 +149,7 @@ def getResfile(rlist):
 
 def main():
     thres = (2 ** 20) // (2 ** 3)  # 1 Mbit 보다 크면 Out!
-    ROOT_PATH = '/Users/hongjeongmin/Documents/coding/codeCop/workspace'
+    ROOT_PATH = './workspace'
     ex = codeform(thres, ROOT_PATH)
     projlist = getProjlist(ROOT_PATH)
 

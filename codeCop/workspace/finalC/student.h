@@ -8,11 +8,11 @@
 
 enum {MAX = 100};
 typedef struct student {
-	int snum;
-	char *name;
-	char *addr;
-	char *dept;
-	double grade;
+    int snum;
+    char *name;
+    char *addr;
+    char *dept;
+    double grade;
 } student;
 
 extern int count;

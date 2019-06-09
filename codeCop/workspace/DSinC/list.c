@@ -29,12 +29,11 @@ int at(list**, int);
 
 // #endif
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     list *root = nullptr;
 
     int select=0, kth=0, value=0;
-    while(true){
+    while(true) {
         printf("\nLet's make List!\n");
         printf("1. INSERT | 2. FIND SOMETHING | 3. DELETE SOMETHING | 4. SHOW LIST | 5. STOP MANIPULATE LIST | 6. QUIT PROGRAM\n >> ");
         scanf("%d", &select);
@@ -45,48 +44,47 @@ int main(int argc, char *argv[])
             clear(&root);
             exit(EXIT_SUCCESS);
         }
-        switch(select){
-            case INSERT:
-                printf("Enter \'k\'th pos and input data >>  ");
-                scanf("%d%d", &kth, &value);
-                if(root == nullptr)
-                    printf("list begin!\n");
-                insert(&root, kth, value);
-                printf("%d elements in list\n", size(&root));
-                break;
-            case FIND:
-                printf("what number do you wanna find? >> ");
-                scanf("%d", &value);
-                if(find(&root, value) != nullptr)
-                    printf("%d is in list!\n", find(&root,value)->data);
-                else
-                    printf("Not found...\n");
-                break;
-            case DEL:
-                printf("what number do you wanna delete? >> ");
-                scanf("%d", &value);
-                erase(&root, value);
-                break;
-            case PRINT:
-                if(!size(&root))
-                    printf("No Elements in list!\n");
-                else {
-                    printf("%d elements are in list.\n In list : ", size(&root));
-                    showlist(&root);
-                    printf("\n");
-                }
-                break;
-            default:
-                printf("\nPlease input the number between 1 and 6\n");
-                break;
+        switch(select) {
+        case INSERT:
+            printf("Enter \'k\'th pos and input data >>  ");
+            scanf("%d%d", &kth, &value);
+            if(root == nullptr)
+                printf("list begin!\n");
+            insert(&root, kth, value);
+            printf("%d elements in list\n", size(&root));
+            break;
+        case FIND:
+            printf("what number do you wanna find? >> ");
+            scanf("%d", &value);
+            if(find(&root, value) != nullptr)
+                printf("%d is in list!\n", find(&root,value)->data);
+            else
+                printf("Not found...\n");
+            break;
+        case DEL:
+            printf("what number do you wanna delete? >> ");
+            scanf("%d", &value);
+            erase(&root, value);
+            break;
+        case PRINT:
+            if(!size(&root))
+                printf("No Elements in list!\n");
+            else {
+                printf("%d elements are in list.\n In list : ", size(&root));
+                showlist(&root);
+                printf("\n");
+            }
+            break;
+        default:
+            printf("\nPlease input the number between 1 and 6\n");
+            break;
         }
     }
     clear(&root);
     return EXIT_SUCCESS;
 }
 
-int size(list** root)
-{
+int size(list** root) {
     int count=1;
     list *temp = (*root);
     if(temp == nullptr)
@@ -94,7 +92,7 @@ int size(list** root)
     else if(temp->next == (*root))
         return 1;
     else {
-        while(!temp->next->istail){
+        while(!temp->next->istail) {
             temp = temp->next;
             count++;
         }
@@ -102,15 +100,13 @@ int size(list** root)
     return count;
 }
 
-bool isempty(list **root)
-{
+bool isempty(list **root) {
     return size(root)==0;
 }
 
-void clear(list **root)
-{
+void clear(list **root) {
     list *temp = nullptr;
-    while(!(*root)->istail){
+    while(!(*root)->istail) {
         temp = (*root);
         (*root) = (*root)->next;
         free(temp);
@@ -118,25 +114,22 @@ void clear(list **root)
     free(*root);
 }
 
-list* pos(list** root, int i){
+list* pos(list** root, int i) {
     int count=0;
     list *temp = (*root);
-    if(isempty(&temp) || i > size(&temp)){
+    if(isempty(&temp) || i > size(&temp)) {
         fputs("out of range", stderr);
         exit(EXIT_FAILURE);
-    }
-    else if(i==0){
+    } else if(i==0) {
         while(!temp->ishead)
             temp = temp->next;
-    }
-    else if(i>0) {
-        while(count < i){
+    } else if(i>0) {
+        while(count < i) {
             temp = temp->next;
             count++;
         }
-    }
-    else {
-        while(count < -i){
+    } else {
+        while(count < -i) {
             temp = temp->prev;
             count++;
         }
@@ -144,17 +137,14 @@ list* pos(list** root, int i){
     return temp;
 }
 
-int at(list** root, int i)
-{
+int at(list** root, int i) {
     return pos(root, i)->data;
 }
 
-list* find(list **root, int v)
-{
-    if(isempty(root)){
+list* find(list **root, int v) {
+    if(isempty(root)) {
         return nullptr;
-    }
-    else {
+    } else {
         list *temp = (*root);
         while(temp->data != v)
             temp = temp->next;
@@ -163,8 +153,7 @@ list* find(list **root, int v)
     }
 }
 
-void insert(list **root, int kth, int v)
-{
+void insert(list **root, int kth, int v) {
     list* new = (list*)malloc(sizeof(list));
     list* temp = *root;
 
@@ -173,23 +162,21 @@ void insert(list **root, int kth, int v)
     new->ishead = false;
     new->istail = true;
 
-    if(isempty(root)){
+    if(isempty(root)) {
         *root = new;
         (*root)->ishead = true;
         (*root)->istail = true;
         (*root)->prev = (*root)->next = *root;
-    }
-    else {
-        if(kth < size(root)){
+    } else {
+        if(kth < size(root)) {
             temp = pos(root, kth);
             new->istail = false;
             temp->next = new;
             new->prev = temp;
             new->next = temp->next;
             temp->next->prev = new;
-        }
-        else { // need to modify
-            while(!temp->istail){
+        } else { // need to modify
+            while(!temp->istail) {
                 printf("node data : %d\n", temp->data);
                 temp = temp->next;
             }
@@ -203,13 +190,11 @@ void insert(list **root, int kth, int v)
     }
 }
 
-void erase(list **root, int v)
-{
-    if(isempty(root)){
+void erase(list **root, int v) {
+    if(isempty(root)) {
         printf("list is empty.");
         return;
-    }
-    else {
+    } else {
         list *temp = find(root,v);
         temp->next->prev = temp->prev;
         temp->prev->next = temp->next;
@@ -217,10 +202,9 @@ void erase(list **root, int v)
     }
 }
 
-void showlist(list** root)
-{
+void showlist(list** root) {
     list *temp = *root;
-    while(temp != nullptr){
+    while(temp != nullptr) {
         printf("%d -> ", temp->data);
         temp = temp->next;
         if(temp->istail)

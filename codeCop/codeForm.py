@@ -45,6 +45,7 @@ class ecode:
         return True
 
     def ferr(self, fpath, fname):
+        # print(fpath, fname)
         if self._overMaxflen(fpath, fname):
             self.codes['e1'][fpath] = "Too Long Name"
             return True
@@ -57,16 +58,18 @@ class ecode:
         return False
 
     def derr(self, root, dir, files):
-        cp, hp = self.cpat.search(files), self.hpat.search(files)
+        # print(files)
         if len(dir) == 0 and len(files) == 0:
             self.codes['e2'][root] = "Empty Folder"
             return True
         else :
-            if cp is None and hp is None:
-                self.codes['e2'][dir] = "No C source files."
-                return True
-            else:
-                return False
+            for f in files:
+                cp, hp = self.cpat.search(f), self.hpat.search(f)
+                if cp is None and hp is None:
+                    self.codes['e2'][f] = "No C source files."
+                    return True
+                else:
+                    return False
 
     def gexerr(self, dir):
         self.codes['ee'][dir] = "Not Defined Error Occured."
@@ -104,12 +107,13 @@ class projanaly:
 
     def _findcs(self, root, file):
         lineCount = 0
+        # print("in _findcs:", join(root,file))
         findC, findH = self.cpat.search(file), self.hpat.search(file)
         ctemp, htemp = [],[]
         if findC is not None:
             cfname = findC.group()
             cfpath = join(root, cfname)
-            if self.pecode.ferr(cfname, cfpath):
+            if self.pecode.ferr(cfpath, cfname):
                 self.log.wlog(cfpath)
             else:
                 # print("cpath :", cfpath)
@@ -128,11 +132,11 @@ class projanaly:
         elif findH is not None:
             hfname = findH.group()
             hfpath = join(root, hfname)
-            if self.pecode.ferr(hfname, hfpath):
+            if self.pecode.ferr(hfpath, hfname):
                 self.log.wlog(hfpath)
                 return 0
             else:
-                self.result['e0'][hfpath] = {'fsize': "%s" % str(getsize(hfpath))}
+                self.result['e0'][hfpath] = {'fbytes': "%s" % str(getsize(hfpath))}
                 with open(hfpath, "r", encoding='utf-8') as fih:
                     try:
                         htemp = fih.readlines()
@@ -148,35 +152,45 @@ class projanaly:
 
     def analorg(self):
         fcount, dcount, linec = 0, 0, 0
-        self.result['pbytes'] = getsize(self.dir)
+        self.result['pbytes'] = str(getsize(self.dir))
         for r, d, f in os.walk(self.dir):
             if self.pecode.derr(r,d,f):
-                self.log.welog(r)
+                self.log.wedlog(r)
                 continue
             else:
                 if len(d) != 0:
-                    print(d)
+                    # print(d)
                     dcount += len(d)
                 if len(f) != 0:
-                    print(f)
+                    # print(f)
                     fcount += len(f)
-                    linec += self._findcs(r, f)
-        self.result['porg_files'] = fcount + dcount
+                    for t in f:
+                        linec += self._findcs(r, t)
+        self.result['porg_files_folders'] = str(fcount + dcount)
         self.result['porg_clines'] += linec
         sp.call("find -L %s ! -name \"*.c\" ! -name \"*.h\" -delete" % (self.dir), shell=True)
+        sp.call("astyle --style=google --recursive %s/*.c, *.h" % self.dir , shell=True)
 
     def analafter(self):
         # loop directories...
+        self.result['pafter_bytes'] = str(getsize(self.dir))
         for root, dirs, files in os.walk(self.dir):
+            self.result['pafter_files_folders'] += len(files)
             for f in files:
-                if self._findcs(root, files) != 0:
-                    self.result['pafter_clines'] += self._findcs(root, files)
+                if self._findcs(root, f) != 0:
+                    self.result['pafter_clines'] += self._findcs(root, f)
                     self.log.wlog(root)
                 else:
                     if self.pecode.derr(root, dirs, f):
-                        self.log.welog(root)
+                        self.log.wedlog(root)
                         continue
 
+    def getResult(self):
+        for k,v in self.result.items():
+            if isinstance(self.result[k], int):
+                self.result[k] = str(self.result[k])
+        self.result.update(self.pecode.getCode())
+        return (self.result, self.log.getlog)
 # def getReslist(rlist, plist, thres):
 #     logs = []
 #     for p in plist:
@@ -197,23 +211,29 @@ class projanaly:
 
 def main():
     thres = (2 ** 20) // (2 ** 3)  # 1 Mbit 보다 크면 Out!
-    ROOT_PATH = './workspace'
-    plist = [join(ROOT_PATH, i) for i in filter(lambda d: isdir(d), os.listdir(ROOT_PATH))]
+    ROOT_PATH = '/home/hongjeongmin/coding/codeFormatter/codeCop/workspace'
+    # print(os.listdir(ROOT_PATH))
+    # plist = [join(ROOT_PATH, i) for i in filter(lambda d: isdir(d), os.listdir(ROOT_PATH))]
+    # print(plist)
+    plist = [join(ROOT_PATH, i) for i in os.listdir(ROOT_PATH)]
+    llist = []
     for p in plist:
-        ex = projanaly(thres, ROOT_PATH)
-
-    # sp.call("find -L %s ! -name \"*.c\" ! -name \"*.h\" -delete" % (ROOT_PATH), shell=True)
-    # find . ! -name "*.c" ! -name "*.h" -delete -> *.c *.h 제외하고 삭제
-
-    resList = []
-    getReslist(resList, projlist, thres)
-    getResfile(resList)
-    # sp.call("astyle --style=google %s/*.c, *.h" , shell=True)
+        ex = projanaly(thres, p)
+        ex.analorg()
+        ex.analafter()
+        fin = ex.getResult()
+        with open("%s.spec" % p, "w", encoding='utf-8') as fout:
+            json.dump(fin[0], fout, indent=4)
+        llist.append(fin[1])
+    print(llist)
+    # with open("flog.txt", "w", encoding='utf-8') as tout:
+    #     tout.write('\n'.join(llist))
 
 if __name__ == '__main__':
     beg = time.time()
     main()
     print("--- %.6f sec(s) ---" % (time.time() - beg))
 
-    # def getProjlist(rpath):
-    #     return [join(rpath,i) for i in filter(lambda d : isdir(d), os.listdir(rpath))]
+    # sp.call("find -L %s ! -name \"*.c\" ! -name \"*.h\" -delete" % (ROOT_PATH), shell=True)
+    # find . ! -name "*.c" ! -name "*.h" -delete -> *.c *.h 제외하고 삭제
+    # sp.call("astyle --style=google %s/*.c, *.h" , shell=True)

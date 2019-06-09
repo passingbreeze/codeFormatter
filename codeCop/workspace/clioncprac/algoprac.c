@@ -9,8 +9,7 @@ typedef unsigned int uint;
 
 char **table = NULL;
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     FILE *setfp = fopen("syslog.txt", "rb");
     FILE *infp = fopen("log.inp", "rb");
     FILE *outfp = fopen("log.out", "wb");
@@ -21,15 +20,15 @@ int main(int argc, char *argv[])
     table = (char**)calloc(n, sizeof(uint*));
     table[0] = (char*)calloc(MAX_DAYS*n, sizeof(uint));
 
-    FOR(i, 1, n){
+    FOR(i, 1, n) {
         table[i] = table[i-1] + MAX_DAYS;
     }
-    FOR(i, 0, n){
+    FOR(i, 0, n) {
         fread(table[i], sizeof(table[i]), MAX_DAYS, setfp);
     }
 
-    FOR(i, 0, n){
-        FOR(j, 0, MAX_DAYS){
+    FOR(i, 0, n) {
+        FOR(j, 0, MAX_DAYS) {
             printf("%u ", table[i][j]);
         }
         printf("\n");

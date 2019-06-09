@@ -5,13 +5,11 @@
 
 enum {SIZE=80};
 
-char* s_gets(char *st, int n)
-{
+char* s_gets(char *st, int n) {
     char *ret_val = fgets(st, n, stdin);
     int i=0;
 
-    if(ret_val)
-    {
+    if(ret_val) {
         while(st[i]!='\n' && st[i]!='\0')
             ++i;
         if(st[i]=='\n')
@@ -22,19 +20,16 @@ char* s_gets(char *st, int n)
     }
     return ret_val;
 }
-int main()
-{
+int main() {
     char flower[SIZE];
     char addon[] = "s smell like old shoes.";
 
     puts("What is your favorite flower?");
-    if(s_gets(flower, SIZE))
-    {
+    if(s_gets(flower, SIZE)) {
         strcat(flower, addon);
         puts(flower);
         puts(addon);
-    }
-    else
+    } else
         puts("End of file encountered.");
     puts("bye");
 

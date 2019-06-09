@@ -19,141 +19,190 @@ set ErrorCode
  https://docs.microsoft.com/ko-kr/windows/desktop/FileIO/naming-a-file -> 윈도우 파일명 길이제한
  
 '''
-class ecode:
-    def __init__(self, fpath, fname, thres):
-        self.fpath = fpath
-        self.fname = fname
-        self.t = thres
 
-    def _overMaxflen(self):
-        if sys.platform.startswith('windows') and len(self.fpath) > 260 :
+class ecode:
+    def __init__(self, thres):
+        self.t = thres
+        self.cpat, self.hpat = re.compile(r".*[.].*c$"), re.compile(r".*[.].*h$")
+        self.codes = { 'e1' : {},
+                       'e2' : {},
+                       'e3' : {},
+                       'e4' : {},
+                       'ee' : {}  }
+
+    def _overMaxflen(self, fpath, fname):
+        if sys.platform.startswith('windows') and len(fpath) > 260 :
             return True
-        elif (sys.platform.startswith('linux') or sys.platform.startswith('darwin')) and len(self.fname) > 255:
+        elif (sys.platform.startswith('linux') or sys.platform.startswith('darwin')) and len(fname) > 255:
             return True
         else:
             return False
 
-    def ferr(self):
-        if self._overMaxflen():
-            return ('e1', "Too Long Name")
-        elif getsize(self.fpath) > self.t:
-            return ('e3', "Too Big File")
-        elif getsize(self.fpath) == 0:
-            return ('e4', "Empty Source File")
-        return False
+    def errchk(self):
+        for k, v in self.codes:
+            if len(self.codes[k]) == 0:
+                return False
+        return True
 
-    def derr(self):
-
-'''
-    def decErr(e, fname, fpath, t):
-        if overMaxflen(fpath, fname):
-            e['e1'][fpath] = "Too Long Name"
+    def ferr(self, fpath, fname):
+        if self._overMaxflen(fpath, fname):
+            self.codes['e1'][fpath] = "Too Long Name"
             return True
-        elif getsize(fpath) > t:
-            e['e3'][fpath] = "Too Big File"
+        elif getsize(fpath) > self.t:
+            self.codes['e3'][fpath] = "Too Big File"
             return True
         elif getsize(fpath) == 0:
-            e['e4'][fpath] = "Empty Source File"
+            self.codes['e4'][fpath] = "Empty Source File"
             return True
         return False
-'''
-class codeform:
-    def __init__(self, thres, rpath):
+
+    def derr(self, root, dir, files):
+        cp, hp = self.cpat.search(files), self.hpat.search(files)
+        if len(dir) == 0 and len(files) == 0:
+            self.codes['e2'][root] = "Empty Folder"
+            return True
+        else :
+            if cp is None and hp is None:
+                self.codes['e2'][dir] = "No C source files."
+                return True
+            else:
+                return False
+
+    def gexerr(self, dir):
+        self.codes['ee'][dir] = "Not Defined Error Occured."
+
+    def getCode(self):
+        return self.codes
+
+class flog:
+    def __init__(self):
+        self.log = []
+
+    def wlog(self, dir):
+        self.log.append("%s !! %s" % (str(datetime.datetime.now()), dir))
+
+    def wedlog(self, dir):
+        self.log.append("%s !! Error !! %s" % (str(datetime.datetime.now()), dir))
+
+    def getlog(self):
+        return '\n'.join(self.log)
+
+class projanaly:
+    def __init__(self, thres, dir):
         self.thres = thres
-        self.rpath = rpath
-        self.plist = [join(rpath, i) for i in filter(lambda d : isdir(d), os.listdir(rpath))]
+        self.dir = dir
         self.cpat, self.hpat = re.compile(r".*[.].*c$"), re.compile(r".*[.].*h$")
+        self.result = { 'pbytes': 0,
+                        'porg_files_folders': 0,
+                        'porg_clines': 0,
+                        'pafter_bytes': 0,
+                        'pafter_files_folders': 0,
+                        'pafter_clines': 0,
+                        'e0': {} }
+        self.pecode = ecode(self.thres)
+        self.log = flog()
 
-    def _analyProj(self, a, err, dir, thres):
-        # loop directories...
+    def _findcs(self, root, file):
+        lineCount = 0
+        findC, findH = self.cpat.search(file), self.hpat.search(file)
         ctemp, htemp = [],[]
-        log = []
-        for root, dirs, files in os.walk(dir):
-            if len(dirs) == 0 and len(files) == 0:
-                log.append("%s !! %s" % (str(datetime.datetime.now()), root))
-                err['e2'][root] = "Empty Folder"
+        if findC is not None:
+            cfname = findC.group()
+            cfpath = join(root, cfname)
+            if self.pecode.ferr(cfname, cfpath):
+                self.log.wlog(cfpath)
+            else:
+                # print("cpath :", cfpath)
+                self.result['e0'][cfpath] = {'fbytes': "%s" % str(getsize(cfpath))}
+                with open(cfpath, "r", encoding='utf-8') as fic:
+                    try:
+                        ctemp = fic.readlines()
+                    except UnicodeDecodeError:
+                        self.pecode.gexerr(cfpath)
+                    if len(ctemp) != 0:
+                        for line in ctemp:
+                            lineCount += 1
+                self.result['e0'][cfpath]['flines'] = str(lineCount)
+                self.log.wlog(cfpath)
+
+        elif findH is not None:
+            hfname = findH.group()
+            hfpath = join(root, hfname)
+            if self.pecode.ferr(hfname, hfpath):
+                self.log.wlog(hfpath)
+                return 0
+            else:
+                self.result['e0'][hfpath] = {'fsize': "%s" % str(getsize(hfpath))}
+                with open(hfpath, "r", encoding='utf-8') as fih:
+                    try:
+                        htemp = fih.readlines()
+                    except UnicodeDecodeError:
+                        self.pecode.gexerr(hfpath)
+                    if len(htemp) != 0:
+                        for line in htemp:
+                            lineCount += 1
+                self.result['e0'][hfpath]['flines'] = str(lineCount)
+                self.log.wlog(hfpath)
+
+        return lineCount
+
+    def analorg(self):
+        fcount, dcount, linec = 0, 0, 0
+        self.result['pbytes'] = getsize(self.dir)
+        for r, d, f in os.walk(self.dir):
+            if self.pecode.derr(r,d,f):
+                self.log.welog(r)
                 continue
+            else:
+                if len(d) != 0:
+                    print(d)
+                    dcount += len(d)
+                if len(f) != 0:
+                    print(f)
+                    fcount += len(f)
+                    linec += self._findcs(r, f)
+        self.result['porg_files'] = fcount + dcount
+        self.result['porg_clines'] += linec
+        sp.call("find -L %s ! -name \"*.c\" ! -name \"*.h\" -delete" % (self.dir), shell=True)
+
+    def analafter(self):
+        # loop directories...
+        for root, dirs, files in os.walk(self.dir):
             for f in files:
-                logd = str(datetime.datetime.now())
-                lineCount = 0
-                findC, findH = _C.search(f), _H.search(f)
-                if findC is not None:
-                    cfname = findC.group()
-                    cfpath = join(root, cfname)
-                    if decErr(err, cfname, cfpath, thres):
-                        logd += "  !!  Error  !!  %s" % cfpath
-                        log.append(logd)
-                        continue
-                    else:
-                        print("cpath :", cfpath)
-                        a['e0'][cfpath] = {'fsize' : "%s" % str(getsize(cfpath))}
-                        with open(cfpath, "r", encoding='utf-8') as fic:
-                            try :
-                                ctemp = fic.readlines()
-                            except UnicodeDecodeError:
-                                err['ee'][cfpath] = "Unicode Decode Error"
-                            if len(ctemp) != 0 :
-                                for line in ctemp:
-                                    lineCount+=1
-                        a['pline'] += lineCount
-                        a['e0'][cfpath]['flines'] = str(lineCount)
-                        logd += "  %s" % cfpath
-                        log.append(logd)
-                elif findH is not None:
-                    hfname = findH.group()
-                    hfpath = join(root, hfname)
-                    if decErr(err, hfname, hfpath, thres):
-                        logd += "  !!  Error  !!  %s" % hfpath
-                        log.append(logd)
-                        continue
-                    else:
-                        a['e0'][hfpath] = {'fsize': "%s" % str(getsize(hfpath))}
-                        with open(hfpath, "r", encoding='utf-8') as fih:
-                            try:
-                                htemp = fih.readlines()
-                            except UnicodeDecodeError:
-                                err['ee'][hfpath] = "Unicode Decode Error"
-                            if len(htemp) != 0:
-                                for line in htemp:
-                                    lineCount += 1
-                        a['pline'] += lineCount
-                        a['e0'][hfpath]['flines'] = str(lineCount)
-                        logd += "  !!  %s" % hfpath
-                        log.append(logd)
+                if self._findcs(root, files) != 0:
+                    self.result['pafter_clines'] += self._findcs(root, files)
+                    self.log.wlog(root)
                 else:
-                    err['e2'][join(root)] = "No C source files."
-                    logd += "  !!  %s" % root
-                    log.append(logd)
-                    continue
-        # print(log)
-        return log
+                    if self.pecode.derr(root, dirs, f):
+                        self.log.welog(root)
+                        continue
 
-def getReslist(rlist, plist, thres):
-    logs = []
-    for p in plist:
-        anap = {'psize': 0, 'pline': 0, 'e0': {}}
-        erc = {'e1': {}, 'e2': {}, 'e3': {}, 'e4': {}, 'ee':{}}
-        anap['psize'] = getsize(p)
-        logs.append('\n'.join(analyProj(anap, erc, p, thres)))
-        rlist.append((p, anap, erc))
-
-    with open("flog.txt", "w", encoding='utf-8') as lf:
-        lf.write('\n'.join(logs))
-
-def getResfile(rlist):
-    for p, r, e in rlist:
-        with open("%s_origin.spec" % p, "w", encoding='utf-8') as stt:
-            json.dump(r, stt, indent=4)
-        with open("%s_origin_error.spec" % p, "w", encoding='utf-8') as stt:
-            json.dump(e, stt, indent=4)
+# def getReslist(rlist, plist, thres):
+#     logs = []
+#     for p in plist:
+#         pe = projanaly(thres, p)
+#         pe.analorg()
+#         logs.append('\n'.join(analyProj(anap, erc, p, thres)))
+#         rlist.append((p, anap, erc))
+#
+#     with open("flog.txt", "w", encoding='utf-8') as lf:
+#         lf.write('\n'.join(logs))
+#
+# def getResfile(rlist):
+#     for p, r, e in rlist:
+#         with open("%s_origin.spec" % p, "w", encoding='utf-8') as stt:
+#             json.dump(r, stt, indent=4)
+#         with open("%s_origin_error.spec" % p, "w", encoding='utf-8') as stt:
+#             json.dump(e, stt, indent=4)
 
 def main():
     thres = (2 ** 20) // (2 ** 3)  # 1 Mbit 보다 크면 Out!
     ROOT_PATH = './workspace'
-    ex = codeform(thres, ROOT_PATH)
-    projlist = getProjlist(ROOT_PATH)
+    plist = [join(ROOT_PATH, i) for i in filter(lambda d: isdir(d), os.listdir(ROOT_PATH))]
+    for p in plist:
+        ex = projanaly(thres, ROOT_PATH)
 
-    sp.call("find -L %s ! -name \"*.c\" ! -name \"*.h\" -delete" % (ROOT_PATH), shell=True)
+    # sp.call("find -L %s ! -name \"*.c\" ! -name \"*.h\" -delete" % (ROOT_PATH), shell=True)
     # find . ! -name "*.c" ! -name "*.h" -delete -> *.c *.h 제외하고 삭제
 
     resList = []

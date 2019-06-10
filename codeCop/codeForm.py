@@ -117,7 +117,6 @@ class projanaly:
                 self.log.wedlog(cfpath)
             else:
                 # print("cpath :", cfpath)
-                self.log.wlog(cfpath)
                 self.result['e0'][cfpath] = {'fbytes': "%s" % str(getsize(cfpath))}
                 with open(cfpath, "r", encoding='utf-8') as fic:
                     try:
@@ -137,7 +136,6 @@ class projanaly:
                 self.log.wedlog(hfpath)
                 return 0
             else:
-                self.log.wlog(hfpath)
                 self.result['e0'][hfpath] = {'fbytes': "%s" % str(getsize(hfpath))}
                 with open(hfpath, "r", encoding='utf-8') as fih:
                     try:

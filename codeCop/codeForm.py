@@ -94,12 +94,12 @@ class projanaly:
     def __init__(self, thres, dir):
         self.thres = thres
         self.dir = dir
-        self.cpat, self.hpat = re.compile(r".*[.].*c$"), re.compile(r".*[.].*h$")
-        self.result = { 'pbytes': 0,
-                        'porg_files_folders': 0,
+        self.cpat, self.hpat = re.compile(r".*[.].c$"), re.compile(r".*[.].h$")
+        self.result = { 'porg_bytes': 0,
+                        'porg_files': 0,
                         'porg_clines': 0,
                         'pafter_bytes': 0,
-                        'pafter_files_folders': 0,
+                        'pafter_files': 0,
                         'pafter_clines': 0,
                         'e0': {} }
         self.pecode = ecode(self.thres)
@@ -114,9 +114,10 @@ class projanaly:
             cfname = findC.group()
             cfpath = join(root, cfname)
             if self.pecode.ferr(cfpath, cfname):
-                self.log.wlog(cfpath)
+                self.log.wedlog(cfpath)
             else:
                 # print("cpath :", cfpath)
+                self.log.wlog(cfpath)
                 self.result['e0'][cfpath] = {'fbytes': "%s" % str(getsize(cfpath))}
                 with open(cfpath, "r", encoding='utf-8') as fic:
                     try:
@@ -133,9 +134,10 @@ class projanaly:
             hfname = findH.group()
             hfpath = join(root, hfname)
             if self.pecode.ferr(hfpath, hfname):
-                self.log.wlog(hfpath)
+                self.log.wedlog(hfpath)
                 return 0
             else:
+                self.log.wlog(hfpath)
                 self.result['e0'][hfpath] = {'fbytes': "%s" % str(getsize(hfpath))}
                 with open(hfpath, "r", encoding='utf-8') as fih:
                     try:
@@ -151,70 +153,44 @@ class projanaly:
         return lineCount
 
     def analorg(self):
-        fcount, dcount, linec = 0, 0, 0
-        self.result['pbytes'] = str(getsize(self.dir))
+        fcount, linec = 0, 0
+        # self.result['porg_bytes'] = str(sum(getsize(f) for f in self.dir if isfile(f)))
         for r, d, f in os.walk(self.dir):
             if self.pecode.derr(r,d,f):
                 self.log.wedlog(r)
-                continue
-            else:
-                if len(d) != 0:
-                    # print(d)
-                    dcount += len(d)
-                if len(f) != 0:
-                    # print(f)
-                    fcount += len(f)
-                    for t in f:
-                        linec += self._findcs(r, t)
-        self.result['porg_files_folders'] = str(fcount + dcount)
+            if len(f) != 0:
+                print(f)
+                fcount += len(f)
+                for t in f:
+                    self.result['porg_bytes'] += getsize(join(r,t))
+                    linec += self._findcs(r, t)
+        self.result['porg_files'] = str(fcount)
         self.result['porg_clines'] += linec
         sp.call("find -L %s ! -name \"*.c\" ! -name \"*.h\" -delete" % (self.dir), shell=True)
-        sp.call("astyle --style=google --recursive %s/*.c, *.h" % self.dir , shell=True)
+        sp.call("astyle --style=google %s/*.c, *.h" % self.dir , shell=True)
 
     def analafter(self):
         # loop directories...
-        self.result['pafter_bytes'] = str(getsize(self.dir))
-        for root, dirs, files in os.walk(self.dir):
-            self.result['pafter_files_folders'] += len(files)
-            for f in files:
-                if self._findcs(root, f) != 0:
-                    self.result['pafter_clines'] += self._findcs(root, f)
-                    self.log.wlog(root)
-                else:
-                    if self.pecode.derr(root, dirs, f):
-                        self.log.wedlog(root)
-                        continue
+        fcount, linec = 0, 0
+        # self.result['porg_bytes'] = str(sum(getsize(f) for f in self.dir if isfile(f)))
+        for r, d, f in os.walk(self.dir):
+            fcount += len(f)
+            for t in f:
+                self.result['pafter_bytes'] += getsize(join(r,t))
+                linec += self._findcs(r, t)
+        self.result['pafter_files'] = str(fcount)
+        self.result['pafter_clines'] += linec
 
     def getResult(self):
         for k,v in self.result.items():
             if isinstance(self.result[k], int):
                 self.result[k] = str(self.result[k])
         self.result.update(self.pecode.getCode())
-        return (self.result, self.log.getlog)
-# def getReslist(rlist, plist, thres):
-#     logs = []
-#     for p in plist:
-#         pe = projanaly(thres, p)
-#         pe.analorg()
-#         logs.append('\n'.join(analyProj(anap, erc, p, thres)))
-#         rlist.append((p, anap, erc))
-#
-#     with open("flog.txt", "w", encoding='utf-8') as lf:
-#         lf.write('\n'.join(logs))
-#
-# def getResfile(rlist):
-#     for p, r, e in rlist:
-#         with open("%s_origin.spec" % p, "w", encoding='utf-8') as stt:
-#             json.dump(r, stt, indent=4)
-#         with open("%s_origin_error.spec" % p, "w", encoding='utf-8') as stt:
-#             json.dump(e, stt, indent=4)
+        return (self.result, self.log.getlog())
 
 def main():
     thres = (2 ** 20) // (2 ** 3)  # 1 Mbit 보다 크면 Out!
-    ROOT_PATH = '/home/hongjeongmin/coding/codeFormatter/codeCop/workspace'
-    # print(os.listdir(ROOT_PATH))
-    # plist = [join(ROOT_PATH, i) for i in filter(lambda d: isdir(d), os.listdir(ROOT_PATH))]
-    # print(plist)
+    ROOT_PATH = '/home/hongjeongmin/workspace'
     plist = [join(ROOT_PATH, i) for i in os.listdir(ROOT_PATH)]
     llist = []
     for p in plist:
@@ -225,9 +201,9 @@ def main():
         with open("%s.spec" % p, "w", encoding='utf-8') as fout:
             json.dump(fin[0], fout, indent=4)
         llist.append(fin[1])
-    print(llist)
-    # with open("flog.txt", "w", encoding='utf-8') as tout:
-    #     tout.write('\n'.join(llist))
+    # print(llist)
+    with open("flog.txt", "w", encoding='utf-8') as tout:
+        tout.write('\n'.join(llist))
 
 if __name__ == '__main__':
     beg = time.time()

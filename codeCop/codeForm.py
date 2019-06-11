@@ -1,5 +1,5 @@
 import time
-import os, sys, subprocess as sp, re, json, datetime
+import os, sys, subprocess as sp, json, datetime
 from os.path import *
 from functools import *
 
@@ -23,7 +23,6 @@ set ErrorCode
 class ecode:
     def __init__(self, thres):
         self.t = thres
-        self.cpat, self.hpat = re.compile(r".*[.].*c$"), re.compile(r".*[.].*h$")
         self.codes = { 'e1' : {},
                        'e2' : {},
                        'e3' : {},
@@ -64,8 +63,7 @@ class ecode:
             return True
         else :
             for f in files:
-                cp, hp = self.cpat.search(f), self.hpat.search(f)
-                if cp is None and hp is None:
+                if not f.endswith(".c") and not f.endswith(".h"):
                     self.codes['e2'][f] = "No C source files."
                     return True
                 else:
@@ -94,7 +92,6 @@ class projanaly:
     def __init__(self, thres, dir):
         self.thres = thres
         self.dir = dir
-        self.cpat, self.hpat = re.compile(r".*[.].c$"), re.compile(r".*[.].h$")
         self.result = { 'porg_bytes': 0,
                         'porg_files': 0,
                         'porg_clines': 0,
@@ -108,13 +105,12 @@ class projanaly:
     def _findcs(self, root, file):
         lineCount = 0
         # print("in _findcs:", join(root,file))
-        findC, findH = self.cpat.search(file), self.hpat.search(file)
         ctemp, htemp = [],[]
-        if findC is not None:
-            cfname = findC.group()
-            cfpath = join(root, cfname)
-            if self.pecode.ferr(cfpath, cfname):
+        if file.endswith(".c"):
+            cfpath = join(root, file)
+            if self.pecode.ferr(cfpath, file):
                 self.log.wedlog(cfpath)
+                return 0
             else:
                 # print("cpath :", cfpath)
                 self.result['e0'][cfpath] = {'fbytes': "%s" % str(getsize(cfpath))}
@@ -129,10 +125,9 @@ class projanaly:
                 self.result['e0'][cfpath]['flines'] = str(lineCount)
                 self.log.wlog(cfpath)
 
-        elif findH is not None:
-            hfname = findH.group()
-            hfpath = join(root, hfname)
-            if self.pecode.ferr(hfpath, hfname):
+        elif file.endswith(".h"):
+            hfpath = join(root, file)
+            if self.pecode.ferr(hfpath, file):
                 self.log.wedlog(hfpath)
                 return 0
             else:
@@ -152,12 +147,13 @@ class projanaly:
 
     def analorg(self):
         fcount, linec = 0, 0
-        # self.result['porg_bytes'] = str(sum(getsize(f) for f in self.dir if isfile(f)))
+        fpath = self.dir.split('/')[-1]
+        new_dir =  self.dir.replace(fpath, "formatted_"+fpath)
         for r, d, f in os.walk(self.dir):
             if self.pecode.derr(r,d,f):
                 self.log.wedlog(r)
             if len(f) != 0:
-                print(f)
+                # print(f)
                 fcount += len(f)
                 for t in f:
                     self.result['porg_bytes'] += getsize(join(r,t))
@@ -165,7 +161,10 @@ class projanaly:
         self.result['porg_files'] = str(fcount)
         self.result['porg_clines'] += linec
         sp.call("find -L %s ! -name \"*.c\" ! -name \"*.h\" -delete" % (self.dir), shell=True)
-        sp.call("astyle --style=google %s/*.c, *.h" % self.dir , shell=True)
+        sp.call("mkdir %s" % new_dir, shell=True)
+        sp.call("cp -r %s %s" % (self.dir, new_dir), shell=True)
+        sp.call("astyle --style=google %s/*.c, *.h" % new_dir , shell=True)
+        self.dir = new_dir
 
     def analafter(self):
         # loop directories...

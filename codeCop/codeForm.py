@@ -198,7 +198,7 @@ def main(argv):
     plist = [join(ROOT_PATH, i) for i in os.listdir(ROOT_PATH)]
     llist = []
     for p in plist: # analyse projects, formatting and get result of analysis
-        if p.endswith(".spec"):
+        if not isdir(p):
             continue
         ex = projanaly(thres, p)
         ex.analorg()

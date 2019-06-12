@@ -29,7 +29,7 @@ class ecode:
                        'e4' : {},
                        'ee' : {}  }
 
-    def _overMaxflen(self, fpath, fname):
+    def _overMaxflen(self, fpath, fname): # check file name length
         if sys.platform.startswith('windows') and len(fpath) > 260 :
             return True
         elif (sys.platform.startswith('linux') or sys.platform.startswith('darwin')) and len(fname) > 255:
@@ -37,13 +37,13 @@ class ecode:
         else:
             return False
 
-    def errchk(self):
+    def errchk(self): # check error detected files or folders in codes
         for k, v in self.codes:
             if len(self.codes[k]) == 0:
                 return False
         return True
 
-    def ferr(self, fpath, fname):
+    def ferr(self, fpath, fname): # check file errorcode
         # print(fpath, fname)
         if self._overMaxflen(fpath, fname):
             self.codes['e1'][fpath] = "Too Long Name"
@@ -56,26 +56,26 @@ class ecode:
             return True
         return False
 
-    def derr(self, root, dir, files):
+    def derr(self, root, dir, files): # check folder errorcode
         # print(files)
         if len(dir) == 0 and len(files) == 0:
             self.codes['e2'][root] = "Empty Folder"
             return True
         else :
-            for f in files:
-                if not f.endswith(".c") and not f.endswith(".h"):
-                    self.codes['e2'][f] = "No C source files."
+            for file in files:
+                if not file.endswith(".c") and not file.endswith(".h"):
+                    self.codes['e2'][file] = "No C source files."
                     return True
                 else:
                     return False
 
-    def gexerr(self, dir):
+    def gexerr(self, dir): # check error except errorcode
         self.codes['ee'][dir] = "Not Defined Error Occured."
 
-    def getCode(self):
+    def getCode(self): # get total error statistics
         return self.codes
 
-class flog:
+class flog: # write log
     def __init__(self):
         self.log = []
 
@@ -88,7 +88,7 @@ class flog:
     def getlog(self):
         return '\n'.join(self.log)
 
-class projanaly:
+class projanaly: # analyse project
     def __init__(self, thres, dir):
         self.thres = thres
         self.dir = dir
@@ -102,9 +102,23 @@ class projanaly:
         self.pecode = ecode(self.thres)
         self.log = flog()
 
-    def _findcs(self, root, file):
+    def _execAstyle(self): # execute formatter installed in OS
+        if sys.platform.startswith('windows') :
+            fpath = self.dir.split('\\')[-1]
+        else :
+            fpath = self.dir.split('/')[-1]
+        new_dir =  self.dir.replace(fpath, "Formatted_"+fpath) if "Formatted_" not in fpath else self.dir
+        if new_dir != self.dir:
+            sp.call("find -L %s ! -name \"*.c\" ! -name \"*.h\" -delete" % (self.dir), shell=True)
+            sp.call("mkdir %s" % new_dir, shell=True)
+            sp.call("cp -r %s %s" % (self.dir, new_dir), shell=True)
+            sp.call("rm -rf %s" % self.dir, shell=True)
+            self.dir = new_dir
+            sp.call("astyle --style=google --indent=spaces=2 --max-code-length=80\
+             --pad-header --unpad-paren --keep-one-line-blocks --mode=c %s/*.c, *.h" % new_dir , shell=True)
+
+    def _findcs(self, root, file): # find c source files including headers
         lineCount = 0
-        # print("in _findcs:", join(root,file))
         ctemp, htemp = [],[]
         if file.endswith(".c"):
             cfpath = join(root, file)
@@ -145,31 +159,22 @@ class projanaly:
 
         return lineCount
 
-    def analorg(self):
+    def analorg(self): # analyse original project
         fcount, linec = 0, 0
-        fpath = self.dir.split('/')[-1]
-        new_dir =  self.dir.replace(fpath, "formatted_"+fpath)
         for r, d, f in os.walk(self.dir):
             if self.pecode.derr(r,d,f):
                 self.log.wedlog(r)
             if len(f) != 0:
-                # print(f)
                 fcount += len(f)
                 for t in f:
                     self.result['porg_bytes'] += getsize(join(r,t))
                     linec += self._findcs(r, t)
         self.result['porg_files'] = str(fcount)
         self.result['porg_clines'] += linec
-        sp.call("find -L %s ! -name \"*.c\" ! -name \"*.h\" -delete" % (self.dir), shell=True)
-        sp.call("mkdir %s" % new_dir, shell=True)
-        sp.call("cp -r %s %s" % (self.dir, new_dir), shell=True)
-        sp.call("astyle --style=google %s/*.c, *.h" % new_dir , shell=True)
-        self.dir = new_dir
+        self._execAstyle()
 
-    def analafter(self):
-        # loop directories...
+    def analafter(self): # analyse formatted project
         fcount, linec = 0, 0
-        # self.result['porg_bytes'] = str(sum(getsize(f) for f in self.dir if isfile(f)))
         for r, d, f in os.walk(self.dir):
             fcount += len(f)
             for t in f:
@@ -185,12 +190,16 @@ class projanaly:
         self.result.update(self.pecode.getCode())
         return (self.result, self.log.getlog())
 
-def main():
-    thres = (2 ** 20) // (2 ** 3)  # 1 Mbit 보다 크면 Out!
-    ROOT_PATH = '/home/hongjeongmin/workspace'
+def main(argv):
+    thres = (2 ** 20) // (2 ** 3)  # if file size is bigger than 1 Mbit, Out!.(example val)
+    ROOT_PATH = argv[1] # argv[1] == workspace path
+
+    # get project folders in workspace
     plist = [join(ROOT_PATH, i) for i in os.listdir(ROOT_PATH)]
     llist = []
-    for p in plist:
+    for p in plist: # analyse projects, formatting and get result of analysis
+        if p.endswith(".spec"):
+            continue
         ex = projanaly(thres, p)
         ex.analorg()
         ex.analafter()
@@ -198,15 +207,13 @@ def main():
         with open("%s.spec" % p, "w", encoding='utf-8') as fout:
             json.dump(fin[0], fout, indent=4)
         llist.append(fin[1])
-    # print(llist)
-    with open("flog.txt", "w", encoding='utf-8') as tout:
+
+    # write log file
+    today = (datetime.datetime.today().date().isoformat()).replace("-","")
+    with open("%s.flog" % today, "w", encoding='utf-8') as tout:
         tout.write('\n'.join(llist))
 
 if __name__ == '__main__':
     beg = time.time()
-    main()
+    main(sys.argv)
     print("--- %.6f sec(s) ---" % (time.time() - beg))
-
-    # sp.call("find -L %s ! -name \"*.c\" ! -name \"*.h\" -delete" % (ROOT_PATH), shell=True)
-    # find . ! -name "*.c" ! -name "*.h" -delete -> *.c *.h 제외하고 삭제
-    # sp.call("astyle --style=google %s/*.c, *.h" , shell=True)

@@ -109,12 +109,13 @@ class projanaly: # analyse project
             fpath = self.dir.split('/')[-1]
         new_dir =  self.dir.replace(fpath, "Formatted_"+fpath) if "Formatted_" not in fpath else self.dir
         if new_dir != self.dir:
-            sp.call("find -L %s ! -name \"*.c\" ! -name \"*.h\" -delete" % (self.dir), shell=True)
-            sp.call("mkdir %s" % new_dir, shell=True)
-            sp.call("cp -r %s %s" % (self.dir, new_dir), shell=True)
-            sp.call("rm -rf %s" % self.dir, shell=True)
+            sp.call("/usr/bin/find -L %s ! -name \"*.c\" ! -name \"*.h\" -delete" % (self.dir), shell=True)
+            sp.call("/usr/bin/mkdir %s" % new_dir, shell=True)
+            sp.call("/usr/bin/cp -r %s %s" % (self.dir, new_dir), shell=True)
+            os.chmod(new_dir, 0o777)
+            sp.call("/usr/bin/rm -rf %s" % self.dir, shell=True)
             self.dir = new_dir
-            sp.call("astyle --style=google --indent=spaces=2 --max-code-length=80\
+            sp.call("/usr/local/bin/astyle --style=google --indent=spaces=2 --max-code-length=80\
              --pad-header --unpad-paren --keep-one-line-blocks --mode=c %s/*.c, *.h" % new_dir , shell=True)
 
     def _findcs(self, root, file): # find c source files including headers
@@ -126,7 +127,6 @@ class projanaly: # analyse project
                 self.log.wedlog(cfpath)
                 return 0
             else:
-                # print("cpath :", cfpath)
                 self.result['e0'][cfpath] = {'fbytes': "%s" % str(getsize(cfpath))}
                 with open(cfpath, "r", encoding='utf-8') as fic:
                     try:
@@ -206,6 +206,7 @@ def main(argv):
         fin = ex.getResult()
         with open("%s.spec" % p, "w", encoding='utf-8') as fout:
             json.dump(fin[0], fout, indent=4)
+        os.chmod("%s.spec" % p,0o777)
         llist.append(fin[1])
 
     # write log file
